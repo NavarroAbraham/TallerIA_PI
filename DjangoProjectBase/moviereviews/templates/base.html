@@ -23,12 +23,24 @@ height="24"
         <li class="nav-item">
           <a class="nav-link" href="{% url 'statistics' %}">Statistics</a>
         </li>
+        {% if user.is_authenticated %}
         <li class="nav-item">
-          <a class="nav-link" href="#">Login</a>
+          <span class="nav-link">Hello, {{ user.username }}!</span>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Sign Up</a>
+          <a class="nav-link" href="{% url 'password_change' %}">Change Password</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+        </li>
+        {% else %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'login' %}">Login</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'signup' %}">Sign Up</a>
+        </li>
+        {% endif %}
       </ul>
     </div>
   </div>
@@ -43,7 +55,7 @@ height="24"
   <div class="container">
     <div class="row">
       <div class="text-center p-4">
-        <h4>© 2024 Copyright - Paola Vallejo & Juan David Martínez</h4>
+        <h4>© 2024 Copyright - Abraham Navarro</h4>
       </div>
     </div>
   </div>

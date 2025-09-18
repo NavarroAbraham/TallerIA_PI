@@ -32,6 +32,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['34.230.71.87', '127.0.0.1', 'localhost']
 
+
+# Redirect to home after login/signup
+LOGIN_REDIRECT_URL = '/'
 # Application definition
 
 INSTALLED_APPS = [

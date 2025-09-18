@@ -11,6 +11,8 @@ def get_default_array():
     default_arr = np.random.rand(1536)
     return default_arr.tobytes()
 
+from django.contrib.auth.models import User
+
 class Movie(models.Model):
     title = models.CharField(max_length=100)
     description = models.CharField(max_length=1500)
@@ -22,6 +24,17 @@ class Movie(models.Model):
 
     def __str__(self):
         return self.title
+
+
+# Review model for movie reviews
+class Review(models.Model):
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name='reviews')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Review by {self.user.username} on {self.movie.title}"
 
 class Command(BaseCommand):
     help = 'Update movie descriptions using OpenAI'

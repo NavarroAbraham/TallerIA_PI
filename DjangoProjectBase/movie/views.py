@@ -1,3 +1,25 @@
+from .models import Movie, Review
+
+def movie_detail(request, movie_id):
+    from django.shortcuts import get_object_or_404, redirect
+    movie = get_object_or_404(Movie, id=movie_id)
+    reviews = movie.reviews.select_related('user').order_by('-created_at')
+    error = None
+    if request.method == 'POST':
+        if request.user.is_authenticated:
+            text = request.POST.get('review')
+            if text:
+                Review.objects.create(movie=movie, user=request.user, text=text)
+                return redirect('movie_detail', movie_id=movie.id)
+            else:
+                error = "Review cannot be empty."
+        else:
+            error = "You must be logged in to post a review."
+    return render(request, 'movie_detail.html', {
+        'movie': movie,
+        'reviews': reviews,
+        'error': error
+    })
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -29,8 +51,25 @@ def about(request):
     return render(request, 'about.html')
 
 def signup(request):
-    email = request.GET.get('email') 
-    return render(request, 'signup.html', {'email':email})
+    from django.contrib.auth.models import User
+    from django.contrib.auth import login
+    error = None
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password1 = request.POST.get('password1')
+        password2 = request.POST.get('password2')
+        if password1 != password2:
+            error = "Passwords do not match."
+        elif User.objects.filter(username=username).exists():
+            error = "Username already exists."
+        elif User.objects.filter(email=email).exists():
+            error = "Email already registered."
+        else:
+            user = User.objects.create_user(username=username, email=email, password=password1)
+            login(request, user)
+            return render(request, 'signup.html', {'success': True})
+    return render(request, 'signup.html', {'error': error})
 
 
 def statistics_view0(request):
